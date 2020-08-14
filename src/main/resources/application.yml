@@ -1,0 +1,4 @@
+micronaut:
+  application:
+    name: restApi2
+mongodb.uri: mongodb+srv://Tsung:d39105648@mathink-kxlxx.gcp.mongodb.net/mathink?retryWrites=true&w=majority
