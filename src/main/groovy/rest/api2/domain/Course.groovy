@@ -17,7 +17,7 @@ class Course {
 
 	static mapping = {
 		collection 'COURSE'
-		database 'mathink'
+		database 'Cluster0'
 		comment '課程'
 //		version true
 		//---1.COURSE_ID PK0
