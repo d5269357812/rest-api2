@@ -41,6 +41,7 @@ class CourseController {
 	}
 
 //	@Post("/")
+//	TODO learn how to use gorm dirty check
 //	Single<Course> save(Course course) {
 //		Course.withNewSession { Single.just(Course.save(person)) }
 //	}
