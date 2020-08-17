@@ -15,10 +15,12 @@ import io.reactivex.Single
 @Controller("/course")
 class CourseController {
 
+	private Course course
+
 	@Get("/")
 	Single<HttpResponse<?>> list() {
 		List courses
-		Course.withNewSession { courses = Course.list() }
+		courses = Course.list()
 
 		Single.just(courses).map({ result ->
 			HttpResponse.ok(result)
@@ -30,8 +32,7 @@ class CourseController {
 
 	@Get("/{id}")
 	Single<HttpResponse<?>> get(String id) {
-		Course course
-		Course.withNewSession { course = Course.get(id) }
+		course = Course.get(id)
 		Single.just(course).map({ result ->
 			HttpResponse.ok(result)
 		})
@@ -40,25 +41,33 @@ class CourseController {
 //		})
 	}
 
-//	@Post("/")
 //	TODO learn how to use gorm dirty check
-//	Single<Course> save(Course course) {
-//		Course.withNewSession { Single.just(Course.save(person)) }
-//	}
+	@Post("/{name}")
+	Single<Course> save(String name) {
+		course = new Course(name: name)
+		Course.withNewSession { Single.just( course.insert(flush:true) ) }
+	}
 //
-//	@Put("/")
-//	Single<Course> update(Course course) {
-//		Course.withNewSession { Single.just(Course.save(person)) }
-//	}
-//
-//	@Delete("/")
-//	Single<HttpResponse<?>> delete(Course course) {
-//		Course.withNewSession {
-//			Single.just(course.delete()).map({ result ->
-//				HttpResponse.ok(result)
-//			}).onErrorReturn({ throwable ->
+	@Put("/{id}/{name}")
+	Single<Course> update(String id,String name) {
+		course = Course.get(id)
+		course.name = name
+		Course.withNewSession {
+			course.validate()
+			Single.just(course.save(flush:true))
+		}
+	}
+
+	@Delete("/{id}")
+	Single<HttpResponse<?>> delete(String id) {
+		course = Course.get(id)
+		Course.withNewSession {
+			Single.just(course.delete(flush: true)).map({ result ->
+				HttpResponse.ok(result)
+			})
+//					.onErrorReturn({ throwable ->
 //				new JsonError(throwable.message)
 //			})
-//		}
-//	}
+		}
+	}
 }

@@ -21,6 +21,7 @@ class Course {
 		comment '課程'
 //		version true
 		//---1.COURSE_ID PK0
+//		TODO Add indice index to the key property or it will be very slow
 			name				attr:"NAME",				comment:"課程名稱", ignoreNotFound: true
 	}
 
