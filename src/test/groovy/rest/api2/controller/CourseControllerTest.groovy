@@ -1,6 +1,5 @@
 package rest.api2.controller
 
-import com.sun.tools.javac.comp.Todo
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
