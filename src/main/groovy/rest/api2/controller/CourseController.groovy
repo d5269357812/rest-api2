@@ -8,8 +8,7 @@ import io.micronaut.http.annotation.Delete
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
-// TODO find new usage replacement of JsonError
-//import io.micronaut.http.hateos.JsonError
+import io.micronaut.http.hateoas.JsonError
 import io.reactivex.Single
 
 @Controller("/course")
@@ -24,10 +23,9 @@ class CourseController {
 
 		Single.just(courses).map({ result ->
 			HttpResponse.ok(result)
+		}).onErrorReturn({ throwable ->
+			new JsonError(throwable.message)
 		})
-//				.onErrorReturn({ throwable ->
-//			new JsonError(throwable.message)
-//		})
 	}
 
 	@Get("/{id}")
@@ -35,10 +33,9 @@ class CourseController {
 		course = Course.get(id)
 		Single.just(course).map({ result ->
 			HttpResponse.ok(result)
+		}).onErrorReturn({ throwable ->
+			new JsonError(throwable.message)
 		})
-//		onErrorReturn({ throwable ->
-//			new JsonError(throwable.message)
-//		})
 	}
 
 //	TODO learn how to use gorm dirty check
@@ -64,10 +61,9 @@ class CourseController {
 		Course.withNewSession {
 			Single.just(course.delete(flush: true)).map({ result ->
 				HttpResponse.ok(result)
+			}).onErrorReturn({ throwable ->
+				new JsonError(throwable.message)
 			})
-//					.onErrorReturn({ throwable ->
-//				new JsonError(throwable.message)
-//			})
 		}
 	}
 }
