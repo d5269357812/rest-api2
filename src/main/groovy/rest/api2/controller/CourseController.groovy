@@ -56,14 +56,11 @@ class CourseController {
 	}
 
 	@Delete("/{id}")
-	Single<HttpResponse<?>> delete(String id) {
+	void delete(String id) {
 		course = Course.get(id)
 		Course.withNewSession {
-			Single.just(course.delete(flush: true)).map({ result ->
-				HttpResponse.ok(result)
-			}).onErrorReturn({ throwable ->
-				new JsonError(throwable.message)
-			})
+			course.delete(flush:true)
+			HttpResponse.ok()
 		}
 	}
 }

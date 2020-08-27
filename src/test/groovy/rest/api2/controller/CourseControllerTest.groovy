@@ -29,7 +29,7 @@ class CourseControllerTest extends Specification {
     }
 
     def "Get的monkeyTest"() {
-        HttpRequest request = HttpRequest.GET("http://localhost:8080/course/5f3ba356a5b9ab46b4d76033")
+        HttpRequest request = HttpRequest.GET("http://localhost:8080/course/5f47a9f43b3dd548619ed94c")
 
         HttpResponse<Course> rsp = client.toBlocking().exchange(request,
                 Argument.of(Course))
@@ -39,29 +39,24 @@ class CourseControllerTest extends Specification {
 
     }
 
-    def "Save的monkeyTest"() {
+    def "Save and delete 的monkeyTest"() {
         HttpRequest request = HttpRequest.POST("http://localhost:8080/course/forpostApiTest",String)
 
         HttpResponse<Course> rsp1 = client.toBlocking().exchange(request,
                 Argument.of(Course))
-        println(rsp1.body().id.toString())
-//        request = HttpRequest.DELETE("http://localhost:8080/course/"+rsp1.body().id,String)
-//        Todo when insert objectId value change
-//        solution workAround get by name
-
-//        HttpResponse<Course> rsp2 = client.toBlocking().exchange(request,
-//                Argument.of(Course))
+        request = HttpRequest.DELETE("http://localhost:8080/course/"+rsp1.body().id,String)
+        HttpResponse<Course> rsp2 = client.toBlocking().exchange(request,
+                Argument.of(Course))
 
         expect:
         rsp1.complete == true
-//        rsp2.complete == true
+        rsp2.complete == true
 
-//        Todo aftertest clean data
     }
 
     def "Update"() {
         String newName = "forPutapiTest"+Math.random().toString()
-        HttpRequest request = HttpRequest.PUT("http://localhost:8080/course/5f3ba4e567f85562ce9dae01/"+newName,String)
+        HttpRequest request = HttpRequest.PUT("http://localhost:8080/course/5f47aa4e3b3dd548619ed94d/"+newName,String)
 
         HttpResponse<Course> rsp = client.toBlocking().exchange(request,
                 Argument.of(Course))
@@ -70,5 +65,13 @@ class CourseControllerTest extends Specification {
     }
 
     def "Delete"() {
+
+        HttpRequest request = HttpRequest.DELETE("http://localhost:8080/course/",)
+
+        HttpResponse<Course> rsp = client.toBlocking().exchange(request,
+                Argument.of(Course))
+        """use rsp.body to get result"""
+        expect:
+        rsp.complete == true
     }
 }
