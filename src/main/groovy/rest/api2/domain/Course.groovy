@@ -15,6 +15,7 @@ class Course {
 //	TODO asign id by self ref https://medium.com/swlh/dont-use-database-generated-ids-d703d35e9cc4
 	String 		id
 	String		name
+//	TODo try Dynamic Attributes
 
 	static mapping = {
 		collection 'COURSE'
@@ -22,8 +23,8 @@ class Course {
 		comment '課程'
 //		version true
 		//---1.COURSE_ID PK0
-//		TODO Add indice index to the key property or it will be very slow
-			id 					generator: 'uuid', 			attr:"_id"
+//		TODO Add indice index to the key property or it will be very slow ，and mongodb hint
+			id 					generator: 'uuid', 			attr:"_id",		   index: true , indexAttributes: [unique:true, dropDCourseups:true]
 			name				attr:"NAME",				comment:"課程名稱", ignoreNotFound: true
 	}
 
