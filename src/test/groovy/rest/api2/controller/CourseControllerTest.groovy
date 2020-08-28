@@ -39,20 +39,6 @@ class CourseControllerTest extends Specification {
 
     }
 
-    def "Save 的monkeyTest"() {
-        """前提：delete method沒問題"""
-        HttpRequest request = HttpRequest.POST("http://localhost:8080/course/forpostApiTest",String)
-
-        HttpResponse<Course> rsp1 = client.toBlocking().exchange(request,
-                Argument.of(Course))
-        expect:
-        rsp1.complete == true
-
-        cleanup:
-        HttpRequest.DELETE("http://localhost:8080/course/"+rsp1.body().id,String)
-
-    }
-
     def "Update的monkeyTest"() {
         String newName = "forPutapiTest"+Math.random().toString()
         HttpRequest request = HttpRequest.PUT("http://localhost:8080/course/5f47aa4e3b3dd548619ed94d/"+newName,String)
@@ -63,7 +49,7 @@ class CourseControllerTest extends Specification {
         rsp.complete == true
     }
 
-    def "Delete的monkeyTest"() {
+    def "Delete 和 Save的monkeyTest"() {
         HttpRequest request = HttpRequest.POST("http://localhost:8080/course/forDELApiTest",String)
 
         HttpResponse<Course> rsp1 = client.toBlocking().exchange(request,
@@ -72,6 +58,7 @@ class CourseControllerTest extends Specification {
         HttpResponse<Course> rsp2 = client.toBlocking().exchange(request,
                 Argument.of(Course))
         expect:
+        rsp1.complete == true
         rsp2.complete == true
 
     }
