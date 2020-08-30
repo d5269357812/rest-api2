@@ -26,6 +26,8 @@ class CourseControllerTest extends Specification {
         """use rsp.body to get result"""
         expect:
         rsp.body() != []
+        "apitestGet" in rsp.body().collect { course -> course.name}
+        "5f47aa4e3b3dd548619ed94d" in rsp.body().collect { course -> course.id}
     }
 
     def "Get的monkeyTest"() {
@@ -47,6 +49,7 @@ class CourseControllerTest extends Specification {
                 Argument.of(Course))
         expect:
         rsp.complete == true
+        rsp.body().name == newName
     }
 
     def "Delete 和 Save的monkeyTest"() {
@@ -59,6 +62,7 @@ class CourseControllerTest extends Specification {
                 Argument.of(Course))
         expect:
         rsp1.complete == true
+        rsp1.body().name == "forDELApiTest"
         rsp2.complete == true
 
     }
