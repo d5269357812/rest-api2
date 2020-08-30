@@ -1,6 +1,5 @@
 package rest.api2.domain
 import grails.gorm.annotation.Entity
-import org.bson.types.ObjectId
 
 /**
  * <p>Title: O/R Mapping(For Course)</p>

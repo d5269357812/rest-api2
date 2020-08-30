@@ -11,7 +11,7 @@ import spock.lang.Specification
 
 
 import javax.inject.Inject
-
+//TODO generate test data auto matic amd clean
 @MicronautTest
 class CourseControllerTest extends Specification {
     @Inject

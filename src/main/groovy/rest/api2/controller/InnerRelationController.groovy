@@ -47,7 +47,6 @@ class InnerRelationController {
 	}
 
 
-//	TODO learn how to use gorm dirty check
 	@Post("/{name}")
 	Single<InnerRelation> save(String name) {
 		innerRelation = new InnerRelation(name: name)

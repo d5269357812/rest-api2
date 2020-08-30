@@ -1,6 +1,5 @@
 package rest.api2.controller
 
-import grails.gorm.transactions.Transactional
 import rest.api2.domain.*
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
@@ -10,12 +9,12 @@ import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.http.hateoas.JsonError
 import io.reactivex.Single
-
+//TODO retuen xml ref 	: https://dzone.com/articles/micronaut-mastery-return-response-based-on-http-ac
 @Controller("/course")
 class CourseController {
 
 	private Course course
-
+//Todo 拔除觀察者模式 Single
 	@Get("/")
 	Single<HttpResponse<?>> list() {
 		List courses
@@ -44,7 +43,7 @@ class CourseController {
 		course = new Course(name: name)
 		Course.withNewSession { Single.just( course.insert(flush:true) ) }
 	}
-//
+
 	@Put("/{id}/{name}")
 	Single<Course> update(String id,String name) {
 		course = Course.get(id)
