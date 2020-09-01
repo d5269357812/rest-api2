@@ -13,7 +13,7 @@ class CourseController {
 
 	private Course course
 	@Get("/")
-	List<Course> list() {
+	static List<Course> list() {
 		Course.list()
 	}
 
@@ -23,6 +23,7 @@ class CourseController {
 	}
 
 //	TODO learn how to use gorm dirty check
+//	TODO null input 實做
 	@Post("/{name}")
 	Course save(String name) {
 		course = new Course(name: name)
