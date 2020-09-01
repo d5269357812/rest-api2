@@ -23,7 +23,7 @@ class CourseController {
 	}
 
 //	TODO learn how to use gorm dirty check
-//	TODO null input 實做
+//	TODO post with instance
 	@Post("/{name}")
 	Course save(String name) {
 		course = new Course(name: name)
@@ -45,7 +45,7 @@ class CourseController {
 		course = Course.get(id)
 		Course.withNewSession {
 			course.delete(flush:true)
-			HttpResponse.ok()
 		}
+		HttpResponse.ok()
 	}
 }
