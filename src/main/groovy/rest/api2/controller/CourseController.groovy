@@ -13,7 +13,7 @@ class CourseController {
 
 	private Course course
 	@Get("/")
-	static List<Course> list() {
+	List<Course> list() {
 		Course.list()
 	}
 
