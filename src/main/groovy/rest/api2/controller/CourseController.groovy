@@ -19,20 +19,20 @@ class CourseController {
 
 	@Get("/{id}")
 	Course get(String id) {
-		course = Course.get(id)
+		Course.get id
 	}
 
 //	TODO learn how to use gorm dirty check
 //	TODO post with instance
 	@Post("/{name}")
-	Course save(String name) {
+	Course save(name) {
 		course = new Course(name: name)
 		Course.withNewSession { course.insert(flush:true) }
 	}
 
 	@Put("/{id}/{name}")
-	Course update(String id,String name) {
-		course = Course.get(id)
+	Course update(id,name) {
+		course = Course.get id
 		course.name = name
 		Course.withNewSession {
 			course.validate()
@@ -41,11 +41,9 @@ class CourseController {
 	}
 
 	@Delete("/{id}")
-	void delete(String id) {
-		course = Course.get(id)
-		Course.withNewSession {
-			course.delete(flush:true)
-		}
+	void delete(id) {
+		course = Course.get id
+		course.delete(flush:true)
 		HttpResponse.ok()
 	}
 }
