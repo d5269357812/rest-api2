@@ -15,9 +15,7 @@ class Author {
 	String 		id
 	String		name
 	Book		bookFirst
-	String		bookFirstId
 	Book		bookSecond
-	String		bookSecondId
 
 	static mapping = {
 		collection 	 'AUTHOR'
@@ -27,18 +25,14 @@ class Author {
 			name					attr:"NAME",			comment:"課程名稱", ignoreNotFound: true
 //		TODO lookup 只會找到 Book or BookId 其中一個
 			bookFirst				attr:"BOOK_FIRST",		comment:"首本書", ignoreNotFound: true
-			bookFirstId				attr:"BOOK_FIRST",		comment:"首本書ID", ignoreNotFound: true
 			bookSecond				attr:"BOOK_SECOND",		comment:"第二書", ignoreNotFound: true
-			bookSecondId			attr:"BOOK_SECOND",		comment:"第二書ID", ignoreNotFound: true
 	}
 
 
 	static constraints = {
 		name					(nullable:false, blank: false)
 		bookFirst				(nullable:true, blank: true)
-		bookFirstId				(nullable:true, blank: true)
 		bookSecond				(nullable:true, blank: true)
-		bookSecondId			(nullable:true, blank: true)
 	}
 }
 

@@ -1,5 +1,9 @@
 package rest.api2.controller.oneToTwo
 
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
+import com.mongodb.client.model.Filters as Mfil
+import com.mongodb.client.model.Updates as Mupd
 
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.*
@@ -63,9 +67,8 @@ class AuthorController {
 	@Put("publish/{id}/{book1Id}/{book2Id}")
 	Single<Author> publish(String id,String book1Id,String book2Id) {
 		author = Author.get(id)
-		if (author.bookFirstId || author.bookSecondId)  throw new Exception("The number ${author.name} is 出過書了")
-		author.bookFirst = Book.get(book1Id)
-		author.bookSecond = Book.get(book2Id)
+		if (author.bookFirst || author.bookSecond)  throw new Exception("The number ${author.name} is 出過書了")
+		author.bookFirst = Book.get(book1Id);author.bookSecond = Book.get(book2Id)
 		Author.withNewSession {
 			author.validate()
 			Single.just(author.save(flush:true))
@@ -73,23 +76,14 @@ class AuthorController {
 	}
 
 	@Put("closeBook/{id}/{book1Id}/{book2Id}")
-	void closeBook(String id,String book1Id,String book2Id) {
-//		TODO this work around should solve
-		author = Author.get(id)
-		String b1Id,b2Id
-		if (author.bookFirst)b1Id = author.bookFirst.id
-		if (author.bookSecond)b1Id = author.bookFirst.id
-		if (author.bookFirstId)b2Id = author.bookFirstId
-		if (author.bookSecondId)b2Id = author.bookSecondId
-
-		if ( b1Id != book1Id || b2Id != book2Id)  throw new Exception("他沒有出這兩本書")
-		author.bookFirstId 		= ""
-		author.bookSecondId 	= ""
-		Author.withNewSession {
-			author.validate()
-//			TODO can not convert to json?
-			author.save(flush:true)
-		}
+	void closeBook(id, book1Id, book2Id) {
+		author = Author.get id
+		if (author.bookFirst.id != book1Id || author.bookSecond.id != book2Id) throw new Exception("他沒有出這兩本書")
+		//TODO hardcode has to solve block by read app.yml issue 791 https://github.com/micronaut-projects/micronaut-core/issues/791
+		MongoClient mongoClient = MongoClients.create "mongodb+srv://Tsung:d39105648@cluster0.dmjou.mongodb.net/Cluster0?retryWrites=true&w=majority"
+		mongoClient.getDatabase("oneToTwo").getCollection("AUTHOR").updateOne(Mfil.eq("_id", id), Mupd.combine(Mupd.unset("BOOK_FIRST"), Mupd.unset("BOOK_SECOND")))
+		//before do
+		mongoClient.close()
 	}
 
 
