@@ -17,9 +17,10 @@ class CourseControllerTest extends Specification {
     @Inject
     @Client("/")
     RxStreamingHttpClient client
+    String domain  = "restapi2-env.eba-gyu239vm.us-east-2.elasticbeanstalk.com"
 
     def "List的猴子測試"() {
-        HttpRequest request = HttpRequest.GET("http://localhost:8080/course")
+        HttpRequest request = HttpRequest.GET("http://$domain/course")
 
         HttpResponse<List<Course>> rsp = client.toBlocking().exchange(request,
                 Argument.listOf(Course))
@@ -31,7 +32,7 @@ class CourseControllerTest extends Specification {
     }
 
     def "Get的monkeyTest"() {
-        HttpRequest request = HttpRequest.GET("http://localhost:8080/course/5f47a9f43b3dd548619ed94c")
+        HttpRequest request = HttpRequest.GET("http://$domain/course/5f47a9f43b3dd548619ed94c")
 
         HttpResponse<Course> rsp = client.toBlocking().exchange(request,
                 Argument.of(Course))
@@ -43,7 +44,7 @@ class CourseControllerTest extends Specification {
 
     def "Update的monkeyTest"() {
         String newName = "forPutapiTest"+Math.random().toString()
-        HttpRequest request = HttpRequest.PUT("http://localhost:8080/course/5f47aa4e3b3dd548619ed94d/"+newName,String)
+        HttpRequest request = HttpRequest.PUT("http://$domain/course/5f47aa4e3b3dd548619ed94d/"+newName,String)
 
         HttpResponse<Course> rsp = client.toBlocking().exchange(request,
                 Argument.of(Course))
@@ -53,11 +54,11 @@ class CourseControllerTest extends Specification {
     }
 
     def "Delete 和 Save的monkeyTest"() {
-        HttpRequest request = HttpRequest.POST("http://localhost:8080/course/forDELApiTest",String)
+        HttpRequest request = HttpRequest.POST("http://$domain/course/forDELApiTest",String)
 
         HttpResponse<Course> rsp1 = client.toBlocking().exchange(request,
                 Argument.of(Course))
-        request = HttpRequest.DELETE("http://localhost:8080/course/"+rsp1.body().id,String)
+        request = HttpRequest.DELETE("http://$domain/course/"+rsp1.body().id,String)
         HttpResponse<Course> rsp2 = client.toBlocking().exchange(request,
                 Argument.of(Course))
         expect:
