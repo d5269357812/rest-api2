@@ -1,69 +1,101 @@
 package rest.api2.controller
 
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.model.Filters as Mfil
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.RxStreamingHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.annotation.MicronautTest
+import org.bson.Document
 import rest.api2.domain.Course
+import spock.lang.Shared
 import spock.lang.Specification
 
 
 import javax.inject.Inject
+
 //TODO generate test data auto matic amd clean
 @MicronautTest
 class CourseControllerTest extends Specification {
     @Inject
     @Client("/")
     RxStreamingHttpClient client
+    @Shared
+    MongoClient mongoClient
+    @Shared
+    MongoCollection<Document> courseCol
+    @Shared
+    HttpRequest request
+
+    static final String uuid = UUID.randomUUID()
+
+    def setupSpec() {
+        //TODO hardcode has to solve block by read app.yml issue 791 https://github.com/micronaut-projects/micronaut-core/issues/791
+        mongoClient = MongoClients.create "mongodb+srv://Tsung:d39105648@cluster0.dmjou.mongodb.net/Cluster0?retryWrites=true&w=majority"
+        courseCol = mongoClient.getDatabase("Cluster0").getCollection("COURSE")
+    }
+
+    def cleanupSpec() {
+        mongoClient.close()
+    }
 
     def "List的猴子測試"() {
-        HttpRequest request = HttpRequest.GET("http://localhost:8080/course")
+        request = HttpRequest.GET "http://localhost:8080/course"
 
-        HttpResponse<List<Course>> rsp = client.toBlocking().exchange(request,
-                Argument.listOf(Course))
+        HttpResponse<List<Course>> rsp = client.toBlocking().exchange(request, Argument.listOf(Course))
         """use rsp.body to get result"""
         expect:
-        rsp.body() != []
-        "apitestGet" in rsp.body().collect { course -> course.name}
-        "5f47aa4e3b3dd548619ed94d" in rsp.body().collect { course -> course.id}
+        rsp.complete == true
     }
 
     def "Get的monkeyTest"() {
-        HttpRequest request = HttpRequest.GET("http://localhost:8080/course/5f47a9f43b3dd548619ed94c")
-
-        HttpResponse<Course> rsp = client.toBlocking().exchange(request,
-                Argument.of(Course))
+        Document doc = new Document("_id", uuid)
+                .append("name", "analysticGetApitest")
+        courseCol.insertOne doc
+        request = HttpRequest.GET "http://localhost:8080/course/$uuid"
+        HttpResponse<Course> rsp = client.toBlocking().exchange(request, Argument.of(Course))
+        courseCol.deleteOne Mfil.eq("_id", uuid)
         """use rsp.body to get result"""
         expect:
-        rsp.body().name == "apitestGet"
-
+        rsp.body().name == "analysticGetApitest"
     }
 
-    def "Update的monkeyTest"() {
-        String newName = "forPutapiTest"+Math.random().toString()
-        HttpRequest request = HttpRequest.PUT("http://localhost:8080/course/5f47aa4e3b3dd548619ed94d/"+newName,String)
-
-        HttpResponse<Course> rsp = client.toBlocking().exchange(request,
-                Argument.of(Course))
-        expect:
-        rsp.complete == true
-        rsp.body().name == newName
-    }
+//    TODO update 無 api 單元測試
+//    def "Update的monkeyTest 打錯字了啦"() {
+//        Document doc = new Document("_id", uuid)
+//                .append("NAME", "msthClass")
+//        courseCol.insertOne doc
+//        request = HttpRequest.PUT("http://localhost:8080/course/$uuid/mathClass",String)
+//        HttpResponse<Course> rsp = client.toBlocking().exchange(request, Argument.of(Course))
+//        courseCol.deleteOne Mfil.eq("_id", uuid)
+//        expect:
+//        rsp.body().name == "mathClass"
+//    }
 
     def "Delete 和 Save的monkeyTest"() {
-        HttpRequest request = HttpRequest.POST("http://localhost:8080/course/forDELApiTest",String)
+        request = HttpRequest.POST("http://localhost:8080/course/forDELApiTest", String)
 
-        HttpResponse<Course> rsp1 = client.toBlocking().exchange(request,
-                Argument.of(Course))
-        request = HttpRequest.DELETE("http://localhost:8080/course/"+rsp1.body().id,String)
-        HttpResponse<Course> rsp2 = client.toBlocking().exchange(request,
-                Argument.of(Course))
+        HttpResponse<Course> rsp1 = client.toBlocking().exchange(request, Argument.of(Course))
+        request = HttpRequest.DELETE("http://localhost:8080/course/" + rsp1.body().id, String)
+        HttpResponse<Course> rsp2 = client.toBlocking().exchange(request, Argument.of(Course))
         expect:
-        rsp1.complete == true
         rsp1.body().name == "forDELApiTest"
-        rsp2.complete == true
+    }
 
+    def "insert update 整合測試"() {
+        request = HttpRequest.POST("http://localhost:8080/course/msthClass", String)
+        HttpResponse<Course> rsp_insert = client.toBlocking().exchange(request, Argument.of(Course))
+
+        request = HttpRequest.PUT("http://localhost:8080/course/${rsp1.body().id}/mathClass", String)
+        HttpResponse<Course> rsp_update = client.toBlocking().exchange(request, Argument.of(Course))
+
+        courseCol.deleteOne Mfil.eq("_id", rsp1.body().id)
+        expect:
+        rsp_insert.body().name == "msthClass"
+        rsp_update.body().name == "mathClass"
     }
 }
