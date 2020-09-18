@@ -94,7 +94,7 @@ class CourseControllerTest extends Specification {
         request = HttpRequest.PUT("http://localhost:8080/course/${rsp_insert.body().id}/mathClass", String)
         HttpResponse<Course> rsp_update = client.toBlocking().exchange(request, Argument.of(Course))
 
-        courseCol.deleteOne Mfil.eq("_id", rsp1.body().id)
+        courseCol.deleteOne Mfil.eq("_id", rsp_insert.body().id)
         expect:
         rsp_insert.body().name == "msthClass"
         rsp_update.body().name == "mathClass"
