@@ -27,23 +27,21 @@ class CourseController {
 	@Post("/{name}")
 	Course save(name) {
 		course = new Course(name: name)
-		Course.withNewSession { course.insert(flush:true) }
+		course.insert flush:true
 	}
 
 	@Put("/{id}/{name}")
 	Course update(id,name) {
 		course = Course.get id
 		course.name = name
-		Course.withNewSession {
-			course.validate()
-			course.save(flush:true)
-		}
+		course.validate()
+		course.save flush:true
 	}
 
 	@Delete("/{id}")
 	void delete(id) {
 		course = Course.get id
-		course.delete(flush:true)
+		course.delete flush:true
 		HttpResponse.ok()
 	}
 }
