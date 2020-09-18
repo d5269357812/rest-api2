@@ -11,6 +11,7 @@ import io.micronaut.http.client.RxStreamingHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.annotation.MicronautTest
 import org.bson.Document
+//TODO test 和 app 不該共用資源
 import rest.api2.domain.Course
 import spock.lang.Shared
 import spock.lang.Specification
@@ -90,7 +91,7 @@ class CourseControllerTest extends Specification {
         request = HttpRequest.POST("http://localhost:8080/course/msthClass", String)
         HttpResponse<Course> rsp_insert = client.toBlocking().exchange(request, Argument.of(Course))
 
-        request = HttpRequest.PUT("http://localhost:8080/course/${rsp1.body().id}/mathClass", String)
+        request = HttpRequest.PUT("http://localhost:8080/course/${rsp_insert.body().id}/mathClass", String)
         HttpResponse<Course> rsp_update = client.toBlocking().exchange(request, Argument.of(Course))
 
         courseCol.deleteOne Mfil.eq("_id", rsp1.body().id)
