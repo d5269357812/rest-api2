@@ -39,6 +39,8 @@ dependencies {
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.0.1")
 
     implementation "io.micronaut:micronaut-management"
+    implementation ('com.linecorp.bot:line-bot-model:4.3.0')
+    implementation ('com.linecorp.bot:line-bot-api-client:4.3.0')
 }
 
 test.classpath += configurations.developmentOnly
